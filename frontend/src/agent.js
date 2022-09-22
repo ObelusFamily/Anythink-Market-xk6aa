@@ -51,17 +51,25 @@ const Tags = {
 };
 
 const limit = (count, p) => `limit=${count}&offset=${p ? p * count : 0}`;
+const addTitle = (t) => (t ? `&title=${t}` : "");
 const omitSlug = (item) => Object.assign({}, item, { slug: undefined });
 const Items = {
-  all: (page) => requests.get(`/items?${limit(1000, page)}`),
-  bySeller: (seller, page) =>
-    requests.get(`/items?seller=${encode(seller)}&${limit(500, page)}`),
-  byTag: (tag, page) =>
-    requests.get(`/items?tag=${encode(tag)}&${limit(1000, page)}`),
+  all: (page, title) =>
+    requests.get(`/items?${limit(1000, page)}${addTitle(title)}`),
+  bySeller: (seller, page, title) =>
+    requests.get(
+      `/items?seller=${encode(seller)}&${limit(500, page)}${addTitle(title)}`
+    ),
+  byTag: (tag, page, title) =>
+    requests.get(
+      `/items?tag=${encode(tag)}&${limit(1000, page)}${addTitle(title)}`
+    ),
   del: (slug) => requests.del(`/items/${slug}`),
   favorite: (slug) => requests.post(`/items/${slug}/favorite`),
-  favoritedBy: (seller, page) =>
-    requests.get(`/items?favorited=${encode(seller)}&${limit(500, page)}`),
+  favoritedBy: (seller, page, title) =>
+    requests.get(
+      `/items?favorited=${encode(seller)}&${limit(500, page)}${addTitle(title)}`
+    ),
   feed: () => requests.get("/items/feed?limit=10&offset=0"),
   get: (slug) => requests.get(`/items/${slug}`),
   unfavorite: (slug) => requests.del(`/items/${slug}/favorite`),
